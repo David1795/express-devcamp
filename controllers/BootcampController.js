@@ -1,44 +1,75 @@
-exports.getAllBootcamps = (req, res)=>{
+
+const  sequelize = require('../config/seq')
+
+const {DataTypes} = require('sequelize')
+
+const BootModel = require('../models/bootcamp')
+
+const Boot = BootModel(sequelize, DataTypes)
+
+
+
+
+exports.getAllBootcamps = async (req, res)=>{
+    const allBootcamps = await Boot.findAll()
+    console.log(allBootcamps)
     res 
         .status(200)
         .json({
             "success" : true,
-            "data": `All bootcamps`
+            "data": allBootcamps
         })
 }
 
-exports.getSingleBootcamp = (req, res)=>{
+exports.getSingleBootcamp =  async (req, res)=>{
+    const singleBoot = await Boot.findByPk(req.params.id)
     res 
         .status(200)
         .json({
             "success" : true,
-            "data": `Single bootcamp ${req.params.id}`
+            "data": singleBoot
         })
 }
 
-exports.createBootcamp = (req , res)=>{
+exports.createBootcamp = async (req , res)=>{
+    const newBoot = await Boot.create(req.body)
     res
         .status(201)
         .json({
             "success" : true,
-            "data": "Create bootcamp"
+            "data": newBoot
         })
 }
 
-exports.updateBootcamp = (req , res)=>{
+exports.updateBootcamp = async (req , res)=>{
+    await Boot.update(req.body,{
+        where:{
+            id: req.params.id
+        }
+    })
+    
+    const singleBoot = await Boot.findByPk(req.params.id)
     res 
         .status(200)
         .json({
             "success" : true,
-            "data": `Update bootcamp ${req.params.id}`
+            "data": singleBoot
         })
 }
 
-exports.deleteBootcamp = (req , res)=>{
+exports.deleteBootcamp = async (req , res)=>{
+    const singleBoot = await Boot.findByPk(req.params.id)
+
+    await Boot.destroy({
+        where: {
+            id: req.params.id
+        }
+      });
+
     res 
         .status(200)
         .json({
             "success" : true,
-            "data": `Delete bootcamp: ${req.params.id}`
+            "data": singleBoot
         })
 }
